@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+
+
+
+        <br>
+          <div class="table-responsive">
+            <table id="myTable" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Edit</th>
+                  <th>Grades</th>
+                  <th>Share Code</th>
+                  <th>Details</th>
+                  <th>User id</th>
+                  <th>Date Created</th>
+                  <th>Date Modified</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in rows %}
+                <tr>
+                   <td> <a><form action="{{url_for('library')}}" method="GET">
+                       <input type="submit" value={{ row.id }} name="rowid">
+                   </form> </a></td>
+
+                   <td> <a><form action="{{url_for('class_grade')}}" method="GET">
+                       <input type="hidden" value={{ row.id }} name="rowid">
+                       <input type="submit" value={{ row.name }} name="coursename">
+                   </form> </a></td>
+
+                   <td> <a><form action="{{url_for('sharing_details')}}" method="GET">
+                       <input type="hidden" value={{ row.id }} name="rowid">
+                       <input type="hidden" value="course" name="itemtype">
+                       <input type="submit" value={{ row.code }} name="code">
+                   </form> </a></td>
+
+                    <td>{{ row.institution_name }} - {{ row.name }} </td>
+
+                    <td> <a><form action="/profile" method="GET">
+                       <input type="submit" value={{ row.user_id }} name="rowid">
+                   </form> </a></td>
+                    <td>{{ row.date_created }}</td>
+                    <td>{{ row.date_modified }}</td>
+
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+    </div>
+{% endblock %}

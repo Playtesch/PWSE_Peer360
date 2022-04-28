@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% if form %}
+    {% import "bootstrap/wtf.html" as wtf %}
+{% endif %}
+
+{% block title %} Peer 360 {% endblock %}
+
+
+{% block content %}
+    <form action="{{url_for('show_files')}}" method="POST">
+        <select id="filtro" name="filtro" onchange="this.form.submit()">
+            <option label="{{filtroActivo}}" selected disabled hidden>{{filtroActivo}}</option>
+            <option label="Más reciente">Más reciente</option>
+            <option label="Más antiguo">Más antiguo</option>
+            <option label="Orden alfabético">Orden alfabético</option>
+            <option label="Orden alfabético inverso">Orden alfabético inverso</option>
+        </select>
+    </form>
+    <div class="container">
+        {% for dataframe in dataframes %}
+            {{dataframe|safe}}
+            <br>
+            <br>
+        {% endfor %}
+    </div>
+{% endblock %}

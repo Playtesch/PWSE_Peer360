@@ -1,0 +1,13 @@
+{
+    "gmail_password": "webmais3A",
+    "gmail_username": "webservidormais@gmail.com",
+	"base_url":"http://webservidormais.pythonanywhere.com",
+
+    "MYSQL_USERNAME":"webservidormais",
+
+    "MYSQL_PASSWORD":"webmais3A",
+
+    "MYSQL_HOSTNAME":"webservidormais.mysql.pythonanywhere-services.com",
+
+    "MYSQL_DATABASENAME":"webservidormais$default"
+ }

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Peer 360  </title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+      <script src="https://raw.githubusercontent.com/mebjas/html5-qrcode/master/minified/html5-qrcode.min.js"></script>
+        <style>
+        body {
+            background-color: #f6f6f7;
+        }
+
+        button {
+            display:inline-block;
+            padding:0.3em 1.2em;
+            margin:0 0.3em 0.3em 0;
+            border-radius:2em;
+            box-sizing: border-box;
+            text-decoration:none;
+            font-family:'Roboto',sans-serif;
+            font-weight:300;
+            color:#FFFFFF;
+            background-color:#4eb5f1;
+            text-align:center;
+            transition: all 0.2s;
+        }
+        button:hover{
+            background-color:#4095c6;
+        }
+        @media all and (max-width:30em){
+            button{
+                display:block;
+                margin:0.2em auto;
+            }
+        }
+        th, td {
+          padding: 15px;
+        }
+        </style>
+ </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Peergrading and 360s Made Easy</a>
+        </div>
+        <ul class="nav navbar-nav">
+
+            <li class={% if module=='home' %}"active"{%else%}""{%endif%}><a href="/">Home</a></li>
+            <li class={% if module=='upload_file' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_uploadFile.upload_file')}}">New Assessment</a></li>
+			{% if cookie or module in ('degree360','peergrading') %}
+				<li class={% if module=='degree360' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_assessment.degree360')}}">360 dregree</a></li>
+                <li class={% if module=='peergrading' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_assessment.peergrading')}}">Peer grading</a></li>
+			{% endif %}
+
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                {{message}}
+            </div>
+        {% endfor%}
+    </div>
+
+    {% block content %} {% endblock %}
+
+<!--    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jqc-1.12.4/dt-1.10.18/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jqc-1.12.4/dt-1.10.18/datatables.min.js"></script> -->
+
+
+
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+
+
+	<script>
+		$(document).ready(function() {
+			$('#myTable').DataTable({
+			    "colReorder": true,
+			    responsive: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+			});
+		} );
+
+	$(function(){
+        var usernameValue = $('#username').val();
+        $('.form-control').change(function(){
+            if ($(this).val() != usernameValue){
+                $('button.btn').prop('disabled', false);
+            }
+        });
+    });
+    </script>
+</body>
+

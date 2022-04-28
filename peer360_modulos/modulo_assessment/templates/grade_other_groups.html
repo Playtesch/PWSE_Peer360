@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+		<h3>Please grade other group:</h3>
+		<form action="{{url_for('modulo_assessment.update_other_groups')}}" method="POST">
+		    {% for group in groups %}
+		       <label for="cars">Please assess group: {{group}} </label>
+		       <select id="{{group}}">
+		           <option label="1">1</option>
+		           <option label="2">2</option>
+		           <option label="3">3</option>
+		           <option label="4">4</option>
+		           <option label="5">5</option>
+		           <option label="6">6</option>
+		           <option label="7">7</option>
+		           <option label="8">8</option>
+		           <option label="9">9</option>
+		           <option label="10">10</option>
+		       </select>
+		       <br>
+            {% endfor %}
+    	    <input type="submit">
+		</form>
+    </div>
+{% endblock %}
