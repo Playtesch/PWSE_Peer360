@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
 
+{% if form %}
+    {% import "bootstrap/wtf.html" as wtf %}
+{% endif %}
+
 {% block content %}
     <div class="container">
-
-        <form action="{{url_for('modulo_uploadFile.save_file')}}" method="POST" id="tableForm">
-
+        {% if form %}
+        <form action="{{url_for('modulo_uploadFile.save_file',confirmed='True')}}" method="POST" id="tableForm">
+            {{ form.csrf_token }}
+            {% if('Apellidos' in df_nohtml.columns) %}
+                {{ wtf.form_field(form.extension_mail) }}
+            {% endif %}
             <input type="hidden" id="filename" name="filename" value="{{filename}}">
 		    <table class="table table-stripped dataframe" border="1">
 		    <thead>
@@ -25,13 +32,14 @@
                        <td>{{value['Disponibilidad']}}</td>
                        <td>{{value['Rellenar Excel parte 1 (Google Drive) - pestañas: Lenguajes y Frameworks [Puntos totales: 100 Puntuación] |90671']}}</td>
                        <td>
-                           <select id="{{value['Nombre de usuario']}}" name="{{value['Nombre de usuario']}}">
-        		           <option label="" value="">--</option>
-        		           <option label="A">A</option>
-        		           <option label="B">B</option>
-        		           <option label="C">C</option>
-        		           <option label="D">D</option>
-        		            </select>
+                     <!--      <select id="{{value['Nombre de usuario']}}" name="{{value['Nombre de usuario']}}">-->
+        		           <!--<option label="" value="">--</option>-->
+        		           <!--<option label="A">A</option>-->
+        		           <!--<option label="B">B</option>-->
+        		           <!--<option label="C">C</option>-->
+        		           <!--<option label="D">D</option>-->
+        		           <!-- </select>-->
+        		            {{  wtf.form_field( form.group, id=value['Nombre de usuario'] ) }}
     		            </td>
     		        {% else %}
     		            <td>{{value['Last Name']}}</td>
@@ -42,13 +50,14 @@
                        <td>{{value['Disponibility']}}</td>
                        <td>{{value['Assignment [Total Pts: 0 Score] |1232742']}}</td>
                        <td>
-                           <select id="{{value['Username']}}" name="{{value['Username']}}">
-        		           <option label="" value="">--</option>
-        		           <option label="A">A</option>
-        		           <option label="B">B</option>
-        		           <option label="C">C</option>
-        		           <option label="D">D</option>
-        		            </select>
+                     <!--      <select id="{{value['Username']}}" name="{{value['Username']}}">-->
+        		           <!--<option label="" value="">--</option>-->
+        		           <!--<option label="A">A</option>-->
+        		           <!--<option label="B">B</option>-->
+        		           <!--<option label="C">C</option>-->
+        		           <!--<option label="D">D</option>-->
+        		           <!-- </select>-->
+        		           {{  wtf.form_field( form.group, id=value['Username'] ) }}
     		            </td>
 		            {% endif %}
 
@@ -56,21 +65,57 @@
             {% endfor %}
     	    </table>
     	    <input type="hidden" id="extensionCorreo" name="extensionCorreo">
-    	    <input type="submit" id="buttonSubmit">
+    	    <input type="submit" name="action" id="buttonSubmit" value="Confirmar grupos">
+    	    <input type="submit" name="action" id="buttonSubmit_noGroup" value="Enviar sin grupos">
 		</form>
-
+        {% endif %}
 
     </div>
     <script>
 
+    function onlyUnique(value, index, self)
+    {
+        return self.indexOf(value) === index;
+    }
+
+    function compruebaSiEsValido()
+    {
+        arrayMio = $("select option:selected").map(function(){
+            return this.value
+        }).get()
+
+        var unique = arrayMio.filter(onlyUnique);
+
+        if (unique.length > 1)
+        {
+            if (unique.includes(""))
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    }
+
+
     $(document).ready(function(){
 
-        $("#tableForm").submit(function()
+        $('')
+        $('#buttonSubmit').click(function(){
+            $('#tableForm').attr('action', "{{url_for('modulo_uploadFile.save_file', confirmed='True')}}");
+        });
+        $('#buttonSubmit_noGroup').click(function(){
+            $('#tableForm').attr('action', "{{url_for('modulo_uploadFile.save_file', confirmed='False')}}");
+        });
+        $("#tableForm").submit(function(event)
         {
-            if ($("th:first-child").html() == 'Apellidos')
+            if($('#tableForm').attr('action') == "{{url_for('modulo_uploadFile.save_file', confirmed='True')}}")
             {
-                var correo = prompt("Escriba la extension del correo");
-                $("#extensionCorreo").val(correo);
+                if(!compruebaSiEsValido())
+                {
+                    alert("Comprueba que todos los alumnos tengan grupos")
+                    event.preventDefault();
+                }
             }
         });
 

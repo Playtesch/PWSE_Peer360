@@ -26,6 +26,7 @@ class Classes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(20),unique=True)
     date = db.Column(db.DateTime)
+    confirmed_groups = db.Column(db.Boolean)
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -78,8 +79,7 @@ def save_groups(filename):
         db.session.add(user_group_class)
         db.session.commit()
 
-def save_file_in_db(filename):
-    new_class = Classes(filename=filename, date=datetime.now())
-
+def save_file_in_db(filename, confirmed_groups="True"):
+    new_class = Classes(filename=filename, date=datetime.now(), confirmed_groups=eval(confirmed_groups))
     db.session.add(new_class)
     db.session.commit()

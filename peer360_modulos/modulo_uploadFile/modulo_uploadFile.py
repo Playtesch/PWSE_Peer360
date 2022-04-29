@@ -6,6 +6,7 @@ modulo_uploadFile = Blueprint("modulo_uploadFile", __name__,static_folder="stati
 
 from modulo_funcionesAux.modulo_funcionesAux import *
 from modulo_bbdd.modulo_bbdd import save_file_in_db, save_groups
+from modulo_forms.modulo_forms import *
 
 df_global = None
 
@@ -88,19 +89,24 @@ def uploaded_file(filename):
         # return render_template('peer360.html',module="home",df_html=df.fillna('').to_html())
         return render_template('peer360.html',module="home",df_html=df.fillna('').to_html())
     elif(extension == 'csv'):
+        form = AssignGroupForm()
         global df_global
 
         df_global["group"] = ['' for i in range(len(df_global.index))]
 
 
-        return render_template('peer360CSV.html',module="home",df_nohtml=df_global, filename=filename)
+        return render_template('peer360CSV.html',module="home",df_nohtml=df_global, filename=filename, form=form)
 
 
-@modulo_uploadFile.route('/save_file', methods=['GET', 'POST'])
-def save_file():
+@modulo_uploadFile.route('/save_file/<string:confirmed>', methods=['GET', 'POST'])
+def save_file(confirmed):
     if request.method == 'POST':
-
         global df_global
+
+        form = AssignGroupForm()
+
+        print("Antes del validate")
+
 
         filename = request.form.get('filename')
 
@@ -109,29 +115,40 @@ def save_file():
         df_global = df_global.reset_index()
 
 
+        print("Al principio del validate")
+
         if('Nombre de usuario' in df_global.columns.values):
             peticionNombreUsuario = 'Nombre de usuario'
         else:
             peticionNombreUsuario = 'Username'
 
+        print("Form.group es: {}".format(form.group))
+        print("Form.group.data es: {}".format(form.group.data))
+        print("Form.extension_mail.data es: {}".format(form.extension_mail.data))
+
         for index, row in df_global.iterrows():
-            df_global["group"][index] = request.form.get(row[peticionNombreUsuario])
+            if eval(confirmed):
+                df_global["group"][index] = request.form.get(row[peticionNombreUsuario])
+            else:
+                df_global["group"][index] = ''
 
         print("dataframe:")
         print(df_global)
 
-        if(request.form.get("extensionCorreo")):
+        if(form.extension_mail.data):
             for index, row in df_global.iterrows():
-                df_global["Nombre de usuario"][index] += request.form.get("extensionCorreo")
+                df_global["Nombre de usuario"][index] += str(form.extension_mail.data)
 
         excelFilename = swap_extension(filename, 'xlsx')
 
+        print("Despues de swap_extension")
         writer = pd.ExcelWriter(os.path.join(current_app.config['UPLOAD_FOLDER'], excelFilename), engine='xlsxwriter')
         df_global.to_excel(writer, index=False, columns=df_global.columns.values[1:])
         writer.save()
 
-        save_file_in_db(excelFilename)
+        save_file_in_db(excelFilename,confirmed)
 
+        print("Hemos guardado en la base de datos el fichero")
         #DESCOMENTAR ****************************************************************************************
         # save_groups(excelFilename)
 

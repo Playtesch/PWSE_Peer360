@@ -17,10 +17,17 @@
         </select>
     </form>
     <div class="container">
-        {% for dataframe in dataframes %}
+        {% for excel,dataframe in lista %}
             {{dataframe|safe}}
             <br>
+            <a href="/download_file/{{excel}}">Download</a>
             <br>
         {% endfor %}
     </div>
+
+    <script>
+        $(document).ready(function(){
+            $(".dataframe").DataTable();
+        })
+    </script>
 {% endblock %}
