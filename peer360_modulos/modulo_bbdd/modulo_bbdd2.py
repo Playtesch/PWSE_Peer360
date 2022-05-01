@@ -1,23 +1,22 @@
-import os
 from flask import Blueprint, current_app
 import pandas as pd
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-#modulo_bbdd = Blueprint("modulo_bbdd", __name__,static_folder="static",template_folder="templates")
+modulo_bbdd = Blueprint("modulo_bbdd", __name__,static_folder="static",template_folder="templates")
 
 db = SQLAlchemy(current_app)
 
 
-from modulo_funcionesAux.modulo_funcionesAux import df_global, get_df_from_file
+from modulo_funcionesAux.modulo_funcionesAux import get_df_from_file
 
 #Una sola clase para estudiantes y usuarios
-class Usuario(db.Model):
+class Estudiante(db.Model):
     __tablename__='estudiantes'
     email = db.Column(db.String(50),primary_key=True)
     nombre = db.Column(db.String(20))
     apellido = db.Column(db.String(20))
-    nombre_usuario = db.Column(db.String(20), unique=True) #Quizas no hace falta nombre, si el nombre de usuario puede ser el email
+    nombre_usuario = db.Column(db.String(20), unique=True)
     #Datos para login
     password = db.Column(db.String(200))
     confirmed = db.Column(db.Int)
@@ -109,7 +108,7 @@ def save_encuesta(name, filename):
         elif("Nombre de usuario" in df.columns.values):
             df.rename(columns={'Nombre de usuario': 'email'}, inplace=True)
 
-        encuesta_detalle = Encuesta_detalle(encuesta = name, student_mail=df["email"][index], student_group = student_group)
+        encuesta_detalle = Detalle_encuesta(encuesta = name, student_mail=df["email"][index], student_group = student_group)
         db.session.add(encuesta_detalle)
     db.session.commit()
 
@@ -134,7 +133,7 @@ def create_peer(df, encuesta):
     df_360 = df.merge(df_360, how='cross')
     df_360 = df_360[(df_360.group == df_360.group2) & (df_360.email != df_360.email2)].copy()
 
-    for index, row in df_groups.iterrows():
+    for index, row in df_360.iterrows():
         peerGrading = PeerGrading(encuesta = encuesta, evaluador = df["email"][index], evaluado = df["email2"][index])
         db.session.add(peerGrading)
     db.session.commit()
