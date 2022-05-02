@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% if form %}
+    {% import "bootstrap/wtf.html" as wtf %}
+{% endif %}
+
+{% block title %} Login {% endblock %}
+
+
+{% block content %}
+
+   {% if form %}
+   <form class="form-signin" method="POST" action="{{url_for('modulo_cuentas.signup')}}">
+        {{ form.hidden_tag() }}
+        {{ wtf.form_field(form.username) }}
+        {{ wtf.form_field(form.email) }}
+        {{ wtf.form_field(form.password) }}
+        {{ wtf.form_field(form.confirm_password) }}
+        {{ wtf.form_field(form.type_user) }}
+
+         <button class="btn btn-lg btn-primary btn-block" type="submit"> Sign up / Registrarse </button>
+     </form>
+    {% endif %}
+
+
+{% endblock %}

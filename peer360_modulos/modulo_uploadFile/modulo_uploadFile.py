@@ -86,13 +86,22 @@ def uploaded_file(filename):
 
     if(extension == 'xlsx'):
         df = pd.read_excel(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+
+        # group_grading = ""
+        # try:
+        group_grading = request.cookies.get('group_grading')
+        # except:
+        if not group_grading:
+            group_grading = "True"
+
+        # print("Group grading es: " + group_grading)
         # return render_template('peer360.html',module="home",df_html=df.fillna('').to_html())
-        return render_template('peer360.html',module="home",df_html=df.fillna('').to_html())
+        return render_template('peer360.html',module="home",df_html=df.fillna('').to_html(), group_grading=group_grading)
     elif(extension == 'csv'):
         form = AssignGroupForm()
         global df_global
 
-        df_global["group"] = ['' for i in range(len(df_global.index))]
+        df_global = df_global.assign(group='')
 
 
         return render_template('peer360CSV.html',module="home",df_nohtml=df_global, filename=filename, form=form)
@@ -128,29 +137,74 @@ def save_file(confirmed):
 
         for index, row in df_global.iterrows():
             if eval(confirmed):
-                df_global["group"][index] = request.form.get(row[peticionNombreUsuario])
+                df_global["group"]= request.form.getlist("group")
             else:
-                df_global["group"][index] = ''
+                print("Entro a vacíos")
+                df_global = df_global.assign(group='')
 
         print("dataframe:")
         print(df_global)
 
         if(form.extension_mail.data):
-            for index, row in df_global.iterrows():
-                df_global["Nombre de usuario"][index] += str(form.extension_mail.data)
+            df_global["Nombre de usuario"] += str(form.extension_mail.data)
 
         excelFilename = swap_extension(filename, 'xlsx')
 
-        print("Despues de swap_extension")
+
+        print("En app, el df recogido es:\n{}".format(df_global))
+
+        email = ""
+        first_name = ""
+        last_name = ""
+        if 'Nombre de usuario' in df_global.columns:
+            email = 'Nombre de usuario'
+            first_name = "Nombre"
+            last_name = "Apellidos"
+        else:
+            email = 'Username'
+            first_name = "First Name"
+            last_name = "Last Name"
+
+        df_aux = df_global[[email]].copy()
+        df_aux.columns = ["email"]
+        df_aux["name"] = df_global[first_name]+" "+df_global[last_name]
+
+        df_global[last_name] = df_aux["name"].copy()
+        df_global[email] = df_aux["email"].copy()
+
+        print("Las columnas del df antes del rename son : {}".format(df_global.columns))
+
+        df_global = df_global.rename(columns={df_global.columns[1]: 'name'})
+        df_global = df_global.rename(columns={df_global.columns[3]: 'email'})
+
+        print("Las columnas del df formado son : {}".format(df_global.columns))
+
+        df_global = df_global.drop(columns=[first_name])
+
+        df_groups = pd.DataFrame({'groups':df_global["group"].unique()})
+        df_groups = df_global.merge(df_groups, how='cross')
+        df_groups = df_groups[df_groups.group != df_groups.groups].copy()
+
+        df_360 = df_global[["email","group"]].copy()
+        df_360.columns = ["email2","group2"]
+        df_360 = df_global.merge(df_360, how='cross')
+        df_360 = df_360[(df_360.group == df_360.group2)&(df_360.email!=df_360.email2)].copy()
+
         writer = pd.ExcelWriter(os.path.join(current_app.config['UPLOAD_FOLDER'], excelFilename), engine='xlsxwriter')
-        df_global.to_excel(writer, index=False, columns=df_global.columns.values[1:])
+
+        df_global.to_excel(writer, sheet_name='original', index=False, columns=df_global.columns.values[1:])
+        df_groups.to_excel(writer, sheet_name='group')
+        df_360.to_excel(writer, sheet_name='360')
+        # Close the Pandas Excel writer and output the Excel file.
         writer.save()
 
         save_file_in_db(excelFilename,confirmed)
 
+        setConfirmed(confirmed)
         print("Hemos guardado en la base de datos el fichero")
         #DESCOMENTAR ****************************************************************************************
-        # save_groups(excelFilename)
+        save_groups(excelFilename,df_global)
+
 
         response = make_response(redirect(url_for('modulo_uploadFile.uploaded_file',
                                         filename=excelFilename)))

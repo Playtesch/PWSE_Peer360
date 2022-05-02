@@ -9,6 +9,9 @@ UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'xlsx', 'csv'}
 
 configuration = None
+confirmed = False
+
+
 import json
 with open('../configuration.json') as json_file:
     configuration = json.load(json_file)
@@ -56,8 +59,8 @@ def get_df_from_csv(filename):
 
     df = df.drop(0)
 
+    df = df.iloc[:,:3]
     return df
-
 
 def get_df_from_file(filename):
     global df_global
@@ -69,3 +72,19 @@ def get_df_from_file(filename):
 
     return df_global
 
+def setConfirmed(value):
+    global confirmed
+    if(isinstance(value,bool)):
+        value='True'
+    confirmed = value
+
+def getConfirmed():
+    global confirmed
+    return confirmed
+
+@current_app.context_processor
+def utility_processor():
+    def getConfirmed():
+        global confirmed
+        return confirmed
+    return dict(getConfirmed=getConfirmed)

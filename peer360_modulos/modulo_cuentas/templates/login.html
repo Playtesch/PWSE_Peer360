@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% if form %}
+    {% import "bootstrap/wtf.html" as wtf %}
+{% endif %}
+
+{% block title %} Login {% endblock %}
+
+
+{% block content %}
+
+   {% if form %}
+   <form class="form-signin" method="POST" action="{{url_for('modulo_cuentas.login')}}">
+        {{ form.hidden_tag() }}
+        {{ wtf.form_field(form.username_or_email) }}
+        {{ wtf.form_field(form.password) }}
+        {{ wtf.form_field(form.remember) }}
+         <button class="btn btn-lg btn-primary btn-block" type="submit"> Search </button>
+         <div class="table-responsive">
+             <table class="table table-stripped">
+                 <tr>
+                    <th> <a  href="{{url_for('modulo_cuentas.resetpassword')}}"> forgot password? / resetear contraseña? </a> </th>
+                </tr>
+            </table>
+         </div>
+     </form>
+    {% endif %}
+
+
+{% endblock %}

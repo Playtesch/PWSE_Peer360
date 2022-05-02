@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% if form %}
+        {% import "bootstrap/wtf.html" as wtf %}
+{% endif %}
+<body>
+
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                {{message}}
+            </div>
+        {% endfor%}
+
+    </div>
+
+
+
+
+    {% block content %}
+        {% if sesion=='No' %}
+        {% else %}
+            <div class="auto_asignar_grupos">
+                {% for clase in clases %}
+                    <form action="{{url_for('modulo_cuentas.student')}}" method="POST" class="tableForm">
+                        {{ form.csrf_token }}
+                        <h4>Elige tu grupo para la clase: {{clase}}</h4>
+                        <input type="hidden" id="clase" name="clase" value="{{clase}}">
+                        {{  wtf.form_field( form.group, id=clase ) }}
+                        <input type="submit" name="action" clase={{clase}} value="Confirmar grupo">
+                    </form>
+                {% endfor %}
+            </div>
+            <p>Revisa el correo por si tienes evaluaciones por hacer</p>
+        {% endif %}
+    {% endblock %}
+
+<!--    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>-->
+    <!--<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+<!--    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jqc-1.12.4/dt-1.10.18/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jqc-1.12.4/dt-1.10.18/datatables.min.js"></script> -->
+
+
+
+    <!--<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>-->
+    <!--<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>-->
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>-->
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>-->
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>-->
+    <!--<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>-->
+
+
+	<script>
+		$(document).ready(function() {
+			$('#myTable').DataTable({
+			    "colReorder": true,
+			    responsive: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+			});
+			$(".tableForm").submit(function(event)
+            {
+                esValido = false
+
+                var btnClicked = event.originalEvent.submitter;
+
+                var clase = $(btnClicked).attr("clase");
+
+                console.log(clase);
+
+                var grupoElegido = $(document.getElementById(clase)).val();
+
+                console.log(grupoElegido);
+
+                if(grupoElegido != "")
+                    esValido=true;
+
+                if(!esValido)
+                {
+                    alert("Debes elegir un grupo valido")
+                    event.preventDefault();
+                }
+
+            });
+
+		} );
+
+	$(function(){
+        var usernameValue = $('#username').val();
+        $('.form-control').change(function(){
+            if ($(this).val() != usernameValue){
+                $('button.btn').prop('disabled', false);
+            }
+        });
+    });
+    </script>
+</body>
+

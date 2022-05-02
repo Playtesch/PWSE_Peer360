@@ -3,8 +3,11 @@
 {% block content %}
     <div class="container">
 
-		<div class="row">		
-			Share this with students: <a href={{url}}> {{url}} </a>			
+		<div class="row">
+			Share this with students: <a href={{url}}> {{url}} </a>
+		</div>
+		<div class="notify">
+		    <a href="/request_assessment/peergrading" class="btn btn-primary">Enviar correos de notificacion</a>
 		</div>
 		<div class="row">
 			{{df_html|safe}}
