@@ -25,6 +25,9 @@ df_global = None
 #     print("El html va a ser:{}".format(msg.html))
 #     mail.send(msg)
 
+@modulo_assessment.route('/test')
+def modulo_assessment_test():
+    return 'OK'
 
 #import base64
 @modulo_assessment.route('/degree360')

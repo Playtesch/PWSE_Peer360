@@ -7,6 +7,10 @@ Bootstrap(current_app)
 
 modulo_forms = Blueprint("modulo_forms", __name__,static_folder="static",template_folder="templates")
 
+@modulo_forms.route('/test')
+def modulo_forms_test():
+    return 'OK'
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, HiddenField, SelectField
 from wtforms.validators import InputRequired, Length, Email,EqualTo

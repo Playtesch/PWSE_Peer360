@@ -4,6 +4,10 @@ import random
 
 modulo_uploadFile = Blueprint("modulo_uploadFile", __name__,static_folder="static",template_folder="templates")
 
+@modulo_uploadFile.route('/test')
+def modulo_uploadFile_test():
+    return 'OK'
+
 from modulo_funcionesAux.modulo_funcionesAux import *
 from modulo_bbdd.modulo_bbdd import save_file_in_db, save_groups
 from modulo_forms.modulo_forms import *

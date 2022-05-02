@@ -5,8 +5,11 @@ from datetime import datetime
 
 modulo_bbdd = Blueprint("modulo_bbdd", __name__,static_folder="static",template_folder="templates")
 
-db = SQLAlchemy(current_app)
+@modulo_bbdd.route('/test')
+def modulo_bbdd_test():
+    return 'OK'
 
+db = SQLAlchemy(current_app)
 
 from modulo_funcionesAux.modulo_funcionesAux import get_df_from_file
 

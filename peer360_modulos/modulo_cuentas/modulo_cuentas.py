@@ -49,6 +49,9 @@ def load_user(user_id):
 def unauthorized_callback():
     return redirect('/login?nextpath=' + request.full_path.replace("&","___and___"))
 
+@modulo_cuentas.route('/test')
+def modulo_cuentas_test():
+    return 'OK'
 
 @modulo_cuentas.route('/profesor')
 def profesor():

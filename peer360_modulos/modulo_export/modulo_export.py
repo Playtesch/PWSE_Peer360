@@ -6,6 +6,10 @@ from datetime import datetime
 
 modulo_export = Blueprint("modulo_export", __name__,static_folder="static",template_folder="templates")
 
+@modulo_export.route('/test')
+def modulo_export_test():
+    return 'OK'
+
 @modulo_export.route("/download_file/<string:filename>", methods=['GET', 'POST'])
 def download_file(filename):
     if request.method == 'POST':
