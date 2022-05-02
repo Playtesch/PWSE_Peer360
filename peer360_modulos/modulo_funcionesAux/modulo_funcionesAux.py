@@ -5,7 +5,7 @@ import pandas as pd
 
 modulo_funcionesAux = Blueprint("modulo_funcionesAux", __name__,static_folder="static",template_folder="templates")
 
-@modulo_funcionesAux.route('/test')
+@modulo_funcionesAux.route('/modulo_funcionesAux/test')
 def modulo_funcionesAux_test():
     return 'OK'
 

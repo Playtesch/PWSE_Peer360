@@ -7,7 +7,7 @@ from flask_login import UserMixin
 
 modulo_bbdd = Blueprint("modulo_bbdd", __name__, static_folder="static", template_folder="templates")
 
-@modulo_bbdd.route('/test')
+@modulo_bbdd.route('/modulo_bbdd/test')
 def modulo_bbdd_test():
     return 'OK'
 

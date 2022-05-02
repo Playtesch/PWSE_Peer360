@@ -49,7 +49,7 @@ def load_user(user_id):
 def unauthorized_callback():
     return redirect('/login?nextpath=' + request.full_path.replace("&","___and___"))
 
-@modulo_cuentas.route('/test')
+@modulo_cuentas.route('/modulo_cuentas/test')
 def modulo_cuentas_test():
     return 'OK'
 

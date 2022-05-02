@@ -4,7 +4,7 @@ import random
 
 modulo_uploadFile = Blueprint("modulo_uploadFile", __name__,static_folder="static",template_folder="templates")
 
-@modulo_uploadFile.route('/test')
+@modulo_uploadFile.route('/modulo_uploadFile/test')
 def modulo_uploadFile_test():
     return 'OK'
 

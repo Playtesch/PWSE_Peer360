@@ -15,6 +15,7 @@ def test_connection(module):
         pass
 
 
+test_connection("main_page")
 test_connection("modulo_assessment")
 test_connection("modulo_bbdd")
 test_connection("modulo_cuentas")

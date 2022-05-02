@@ -93,6 +93,10 @@ def show_files():
 
     return render_template('showFiles.html',module="home", dataframes=dataframes, filtroActivo=filtro)
 
+@app.route('/main_page/test')
+def app_test():
+    return 'OK'
+
 # #import base64
 # @app.route('/degree360')
 # def degree360():

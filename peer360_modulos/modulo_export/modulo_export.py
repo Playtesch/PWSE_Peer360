@@ -6,7 +6,7 @@ from datetime import datetime
 
 modulo_export = Blueprint("modulo_export", __name__,static_folder="static",template_folder="templates")
 
-@modulo_export.route('/test')
+@modulo_export.route('/modulo_export/test')
 def modulo_export_test():
     return 'OK'
 

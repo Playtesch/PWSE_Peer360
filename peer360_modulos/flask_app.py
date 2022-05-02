@@ -125,6 +125,9 @@ def show_files():
     return render_template('showFiles.html',module="home", dataframes=dataframes, filtroActivo=filtro, lista=lista)
 
 
+@app.route('/main_page/test')
+def app_test():
+    return 'OK'
 
 
 # # LOGIN

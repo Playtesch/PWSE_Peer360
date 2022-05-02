@@ -25,7 +25,7 @@ df_global = None
 #     print("El html va a ser:{}".format(msg.html))
 #     mail.send(msg)
 
-@modulo_assessment.route('/test')
+@modulo_assessment.route('/modulo_assessment/test')
 def modulo_assessment_test():
     return 'OK'
 
