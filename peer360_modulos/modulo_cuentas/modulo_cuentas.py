@@ -55,10 +55,14 @@ def modulo_cuentas_test():
 
 @modulo_cuentas.route('/profesor')
 def profesor():
-    if request.cookies.get('filename'):
-        return render_template('profesor.html',module="home",cookie=True)
+    if current_user.type_user == 0:
+        if request.cookies.get('filename'):
+            return render_template('profesor.html',module="home",cookie=True)
+        else:
+            return render_template('profesor.html',module="home")
     else:
-        return render_template('profesor.html',module="home")
+        flash("No tienes permisos")
+        return(redirect(url_for('modulo_cuentas.student')))
 
 @modulo_cuentas.route('/student', methods=['GET','POST'])
 def student():
@@ -75,11 +79,12 @@ def student():
 
         for clase in clases:
             df_global = pd.read_excel(os.path.join(current_app.config['UPLOAD_FOLDER'], clase.filename), engine='openpyxl')
-            print("El grupo actual de " + email + " es: {}".format(df_global[df_global["email"]==email]["group"]))
-            print(type(list(df_global[df_global["email"]==email]["group"])[0]))
-            print(list(df_global[df_global["email"]==email]["group"])[0])
-            if pd.isna(list(df_global[df_global["email"]==email]["group"])[0]):
-                clases_grupo_no_asignado.append(clase.filename)
+            # print("El grupo actual de " + email + " es: {}".format(df_global[df_global["email"]==email]["group"]))
+            # print(type(list(df_global[df_global["email"]==email]["group"])[0]))
+            # print(list(df_global[df_global["email"]==email]["group"])[0])
+            if not df_global[df_global["email"]==email].empty:
+                if pd.isna(list(df_global[df_global["email"]==email]["group"])[0]):
+                    clases_grupo_no_asignado.append(clase.filename)
 
 
         return render_template('student_base.html',clases=clases_grupo_no_asignado, form=form)
@@ -313,6 +318,8 @@ class UserAdmin(ProtectedView):
     column_exclude_list = ('password')
     form_excluded_columns = ('password')
     column_auto_select_related = True
+    column_hide_backrefs = False
+    # column_list = ('filename', 'email', 'id')
 
     def scaffold_form(self):
         form_class = super(UserAdmin, self).scaffold_form()
@@ -324,6 +331,10 @@ class UserAdmin(ProtectedView):
             model.password = generate_password_hash(model.password2)
 
 admin.add_view(UserAdmin(User, db.session))
+admin.add_view(UserAdmin(Classes, db.session))
+admin.add_view(UserAdmin(PeerGrading, db.session))
+admin.add_view(UserAdmin(GroupGrading, db.session))
+admin.add_view(UserAdmin(User_Group_Class, db.session))
 
 admin.add_link(MenuLink(name='Go back',category="", url='/'))
 admin.add_link(MenuLink(name='Log Out',category="", url='/logout'))

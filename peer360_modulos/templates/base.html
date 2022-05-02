@@ -48,30 +48,35 @@
           <a class="navbar-brand" href="/">Peergrading and 360s Made Easy</a>
         </div>
         <ul class="nav navbar-nav">
+        {% block navbarli %}
 
             <li class={% if module=='home' %}"active"{%else%}""{%endif%}><a href="/">Home</a></li>
+            {% if (getTypeUser()==0) %}
+                <li class={% if module=='show_files' %}"active"{%else%}""{%endif%}><a href="{{url_for('show_files')}}">Show files</a></li>
+            {% endif %}
+            {% if ( ((getConfirmed() == 'True') and (sesion!='No')) and (not module in ('signup', 'login'))) %}
+                <li class={% if module=='degree360' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_assessment.degree360')}}">360 dregree</a></li>
+                <li class={% if module=='peergrading' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_assessment.peergrading')}}">Peer grading</a></li>
+            {% endif %}
         	{% if ( (module in ('signup','login','home')) and (sesion=='No') ) %}
         	    <li class={% if module=='login' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_cuentas.login')}}">Log in</a></li>
                 <li class={% if module=='signup' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_cuentas.signup')}}">Sign up</a></li>
             {% elif (not module in ('signup','login') and (sesion!='No')) %}
-			    <li class={% if module=='upload_file' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_uploadFile.upload_file')}}">New Assessment</a></li>
+                {% if (getTypeUser()==0) %}
+			        <li class={% if module=='upload_file' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_uploadFile.upload_file')}}">New Assessment</a></li>
+			    {% endif %}
                 <li class={% if module=='logout' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_cuentas.logout')}}">Log out </a></li>
-            {% endif %}
-            {% if ( ((getConfirmed() == 'True') and (sesion!='No')) and (not module in ('signup', 'login'))) %}
-                <li class={% if module=='peergrading' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_assessment.peergrading')}}">Peer grading</a></li>
-                <li class={% if module=='degree360' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_assessment.degree360')}}">360 dregree</a></li>
             {% endif %}
             {% if  (module in ('signup','login')) %}
                 <li class={% if module=='login' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_cuentas.login')}}">Log in</a></li>
                 <li class={% if module=='signup' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_cuentas.signup')}}">Sign up</a></li>
             {% endif %}
 
+
+        {% endblock %}
         </ul>
       </div>
     </nav>
-    <p>
-        {{ getConfirmed() }}
-    </p>
     <div class="container">
         {% for message in get_flashed_messages() %}
             <div class="alert alert-warning">

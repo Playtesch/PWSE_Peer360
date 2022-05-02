@@ -4,10 +4,6 @@ from flask_mail import Mail, Message
 
 modulo_email = Blueprint("modulo_email", __name__,static_folder="static",template_folder="templates")
 
-@modulo_email.route('/modulo_email/test')
-def modulo_email_test():
-    return 'OK'
-
 mail = Mail(current_app)
 
 def send_email(to, subject, template, url, **kwargs):
@@ -20,3 +16,7 @@ def send_email(to, subject, template, url, **kwargs):
     print("El body va a ser:{}".format(msg.body))
     print("El html va a ser:{}".format(msg.html))
     mail.send(msg)
+
+@modulo_email.route('/modulo_email/test')
+def modulo_email_test():
+    return 'OK'

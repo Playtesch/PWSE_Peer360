@@ -1,13 +1,10 @@
 import os
 from flask import Blueprint, current_app
 import pandas as pd
+from flask_login import current_user
 # from flask_sqlalchemy import SQLAlchemy
 
 modulo_funcionesAux = Blueprint("modulo_funcionesAux", __name__,static_folder="static",template_folder="templates")
-
-@modulo_funcionesAux.route('/modulo_funcionesAux/test')
-def modulo_funcionesAux_test():
-    return 'OK'
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'xlsx', 'csv'}
@@ -86,9 +83,33 @@ def getConfirmed():
     global confirmed
     return confirmed
 
+# def getTypeUser():
+#     if current_user.is_authenticated:
+#         return current_user.type_user
+#     else:
+#         return 0
+
 @current_app.context_processor
 def utility_processor():
     def getConfirmed():
         global confirmed
         return confirmed
-    return dict(getConfirmed=getConfirmed)
+
+    def getTypeUser():
+        if current_user.is_authenticated:
+            return current_user.type_user
+        else:
+            return 1
+
+    return dict(getConfirmed=getConfirmed, getTypeUser=getTypeUser)
+
+@modulo_funcionesAux.route('/modulo_funcionesAux/test')
+def modulo_funcionesAux_test():
+    return 'OK'
+
+# @current_app.context_processor
+# def utility_processor():
+#     def getConfirmed():
+#         global confirmed
+#         return confirmed
+#     return dict(getConfirmed=getConfirmed)
