@@ -54,7 +54,8 @@
             {% if (getTypeUser()==0) %}
                 <li class={% if module=='show_files' %}"active"{%else%}""{%endif%}><a href="{{url_for('show_files')}}">Show files</a></li>
             {% endif %}
-            {% if ( ((getConfirmed() == 'True') and (sesion!='No')) and (not module in ('signup', 'login'))) %}
+            {#{% if ( ((getConfirmed() == 'True') and (sesion!='No')) and (not module in ('signup', 'login'))) %}#}
+            {% if ( ((sesion!='No')) and (not module in ('signup', 'login'))) %}
                 <li class={% if module=='degree360' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_assessment.degree360')}}">360 dregree</a></li>
                 <li class={% if module=='peergrading' %}"active"{%else%}""{%endif%}><a href="{{url_for('modulo_assessment.peergrading')}}">Peer grading</a></li>
             {% endif %}

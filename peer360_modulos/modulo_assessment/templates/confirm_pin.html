@@ -2,14 +2,13 @@
 
 {% block content %}
     <div class="container">
-		<h3>Enter your PIN:</h3>
-		<form action="{{url_for('modulo_assessment.assessing')}}" method="POST">
-		  <input type="hidden" id="type" name="type" value="{{type}}">
-          <input type="hidden" id="token" name="token" value="{{token}}">
+		<h3 class="m-0 font-weight-bold text-primary">Enter your PIN:</h3>
+		<form action="{{url_for('modulo_assessment.assessing2')}}" method="POST">
+		  <input type="hidden" id="tipo" name="tipo" value="{{tipo}}">
           <input type="hidden" id="email" name="email" value="{{email}}">
-		  <label for="pin">Enter your PIN:</label>
+		  <label for="pin" class="m-0 font-weight-bold ">Enter your PIN:</label>
 		  <input type="text" id="pin" name="pin">
-		  <input type="submit">
+		  <input type="submit" class="btn btn-success">
 		</form>
     </div>
 {% endblock %}

@@ -18,9 +18,10 @@
     </form>
     <div class="container">
         {% for excel,dataframe in lista %}
+            <h2>{{excel[1]}}</h2>
             {{dataframe|safe}}
+            <a href="/download_file/{{excel[0]}}/{{excel[1]}}">Download {{excel[1]}}</a>
             <br>
-            <a href="/download_file/{{excel}}">Download</a>
             <br>
         {% endfor %}
     </div>

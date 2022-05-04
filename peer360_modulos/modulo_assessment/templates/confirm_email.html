@@ -2,13 +2,13 @@
 
 {% block content %}
     <div class="container">
-		<h3>Show an email field (allows only one email address):</h3>
-		<form action="{{url_for('modulo_assessment.assess')}}" method="POST">
+		<h3 class="m-0 font-weight-bold text-primary">Show an email field (allows only one email address):</h3>
+		<form action="{{url_for('modulo_assessment.assess2')}}" method="POST">
 		  <input type="hidden" id="type" name="type" value="{{type}}">
-          <input type="hidden" id="token" name="token" value="{{token}}">
-		  <label for="email">Enter your email:</label>
+		  <label for="email" class="m-0 font-weight-bold ">Enter your email:</label>
 		  <input type="email" id="email" name="email">
-		  <input type="submit">
+		  <input type="submit" class="btn btn-success">
 		</form>
     </div>
 {% endblock %}
+

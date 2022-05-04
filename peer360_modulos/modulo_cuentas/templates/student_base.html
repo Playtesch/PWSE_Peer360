@@ -6,7 +6,7 @@
 
     <div class="container">
         {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
+            <div class="card bg-info text-white shadow">
                 {{message}}
             </div>
         {% endfor%}
@@ -21,14 +21,14 @@
                 {% for clase in clases %}
                     <form action="{{url_for('modulo_cuentas.student')}}" method="POST" class="tableForm">
                         {{ form.csrf_token }}
-                        <h4>Elige tu grupo para la clase: {{clase}}</h4>
+                        <h4 class="m-0 font-weight-bold text-primary">Elige tu grupo para la clase: {{clase}}</h4>
                         <input type="hidden" id="clase" name="clase" value="{{clase}}">
                         {{  wtf.form_field( form.group, id=clase ) }}
-                        <input type="submit" name="action" clase={{clase}} value="Confirmar grupo">
+                        <input type="submit" name="action" clase={{clase}} value="Confirmar grupo" class="btn btn-info">
                     </form>
                 {% endfor %}
             </div>
-            <p>Revisa el correo por si tienes evaluaciones por hacer</p>
+            <p class="m-0 font-weight-bold text-danger">Revisa el correo por si tienes evaluaciones por hacer</p>
         {% endif %}
     {% endblock %}
 

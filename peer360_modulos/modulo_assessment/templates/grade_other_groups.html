@@ -1,26 +1,21 @@
 {% extends 'base.html' %}
+{% if forms %}
+    {% import "bootstrap/wtf.html" as wtf %}
+{% endif %}
+
+{% block title %} Grading {% endblock %}
 
 {% block content %}
     <div class="container">
-		<h3>Please grade other group:</h3>
-		<form action="{{url_for('modulo_assessment.update_other_groups')}}" method="POST">
-		    {% for group in groups %}
-		       <label for="cars">Please assess group: {{group}} </label>
-		       <select id="{{group}}">
-		           <option label="1">1</option>
-		           <option label="2">2</option>
-		           <option label="3">3</option>
-		           <option label="4">4</option>
-		           <option label="5">5</option>
-		           <option label="6">6</option>
-		           <option label="7">7</option>
-		           <option label="8">8</option>
-		           <option label="9">9</option>
-		           <option label="10">10</option>
-		       </select>
-		       <br>
-            {% endfor %}
-    	    <input type="submit">
+		<h3 class="m-0 font-weight-bold text-primary">Please grade other group:</h3>
+		{% for form in forms %}
+		<form action="{{url_for('modulo_assessment.grade_other_groups')}}" method="POST">
+            {{ form.hidden_tag() }}
+            <p class="m-0 font-weight-bold ">Encuesta: {{ form.encuesta.data }}</p>
+            <p class="m-0 font-weight-bold ">Grupo: {{ form.evaluado.data }}</p>
+            {{ wtf.form_field(form.grade) }}
+    	    <input type="submit" class="btn btn-primary">
 		</form>
+		{% endfor %}
     </div>
 {% endblock %}

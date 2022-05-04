@@ -5,7 +5,7 @@ import random
 modulo_uploadFile = Blueprint("modulo_uploadFile", __name__,static_folder="static",template_folder="templates")
 
 from modulo_funcionesAux.modulo_funcionesAux import *
-from modulo_bbdd.modulo_bbdd import save_file_in_db, save_groups
+from modulo_bbdd.modulo_bbdd import save_file_in_db, save_groups, create_groups, create_peer
 from modulo_forms.modulo_forms import *
 
 df_global = None
@@ -25,6 +25,7 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             global df_global
+            name = file.filename.rsplit('.', 1)[0].lower()
             if get_extension(file.filename) == 'xlsx':
     #            filename = secure_filename(file.filename)
                 filename = "F"+''.join(random.choice('AILNOQVBCDEFGHJKMPRSTUXZabcdefghijklmnopqrstuvxz1234567890') for i in range(10))+".xlsx"
@@ -38,6 +39,9 @@ def upload_file():
 
                 df_groups = df_global.merge(df_groups, how='cross')
                 df_groups = df_groups[df_groups.group != df_groups.groups].copy()
+
+
+
                 df_360 = df_global[["email","group"]].copy()
                 df_360.columns = ["email2","group2"]
                 df_360 = df_global.merge(df_360, how='cross')
@@ -50,13 +54,15 @@ def upload_file():
                 df_360.to_excel(writer, sheet_name='360')
                 # Close the Pandas Excel writer and output the Excel file.
                 writer.save()
-
-                save_file_in_db(filename)
+                save_file_in_db(filename,name)
+                create_groups(df_groups, name)
+                create_peer(df_360, name)
 
                 # save_groups(filename)
 
                 response = make_response(redirect(url_for('modulo_uploadFile.uploaded_file',
-                                        filename=filename)))
+                                        filename=filename,
+                                        name=name)))
                 response.set_cookie('filename', filename)
                 return response
 
@@ -68,7 +74,8 @@ def upload_file():
                 df_global = get_df_from_file(filename)
 
                 response = make_response(redirect(url_for('modulo_uploadFile.uploaded_file',
-                                        filename=filename)))
+                                        filename=filename,
+                                        name=name)))
                 response.set_cookie('filename', filename)
                 return response
 
@@ -79,8 +86,8 @@ def upload_file():
 #from flask import send_from_directory
 
 # import pandas as pd
-@modulo_uploadFile.route('/uploads/<filename>')
-def uploaded_file(filename):
+@modulo_uploadFile.route('/uploads/<filename>/<name>')
+def uploaded_file(filename,name):
 
     extension = get_extension(filename)
 
@@ -104,7 +111,7 @@ def uploaded_file(filename):
         df_global = df_global.assign(group='')
 
 
-        return render_template('peer360CSV.html',module="home",df_nohtml=df_global, filename=filename, form=form)
+        return render_template('peer360CSV.html',module="home",df_nohtml=df_global, filename=filename, form=form, name=name)
 
 
 @modulo_uploadFile.route('/save_file/<string:confirmed>', methods=['GET', 'POST'])
@@ -118,6 +125,7 @@ def save_file(confirmed):
 
 
         filename = request.form.get('filename')
+        name = request.form.get('name')
 
         # df_global["group"] = ['' for i in range(len(df_global.index))]
 
@@ -185,6 +193,8 @@ def save_file(confirmed):
         df_groups = df_global.merge(df_groups, how='cross')
         df_groups = df_groups[df_groups.group != df_groups.groups].copy()
 
+
+
         df_360 = df_global[["email","group"]].copy()
         df_360.columns = ["email2","group2"]
         df_360 = df_global.merge(df_360, how='cross')
@@ -198,16 +208,19 @@ def save_file(confirmed):
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
 
-        save_file_in_db(excelFilename,confirmed)
+        save_file_in_db(excelFilename,name, confirmed)
+        create_groups(df_groups, name)
+        create_peer(df_360, name)
 
         setConfirmed(confirmed)
         print("Hemos guardado en la base de datos el fichero")
         #DESCOMENTAR ****************************************************************************************
-        save_groups(excelFilename,df_global)
+        save_groups(name,df_global)
 
 
         response = make_response(redirect(url_for('modulo_uploadFile.uploaded_file',
-                                        filename=excelFilename)))
+                                        filename=excelFilename,
+                                        name =name)))
         response.set_cookie('filename', excelFilename)
         return response
 

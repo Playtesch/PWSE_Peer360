@@ -26,6 +26,7 @@ with app.app_context():
     from modulo_uploadFile.modulo_uploadFile import *
     from modulo_assessment.modulo_assessment import *
     from modulo_forms.modulo_forms import *
+    from modulo_evaluacion.modulo_evaluacion import *
     from modulo_export.modulo_export import modulo_export
 
 app.register_blueprint(modulo_funcionesAux)
@@ -36,9 +37,11 @@ app.register_blueprint(modulo_assessment)
 app.register_blueprint(modulo_cuentas)
 app.register_blueprint(modulo_export)
 app.register_blueprint(modulo_email)
+app.register_blueprint(modulo_evaluacion)
 
 # app.register_blueprint(modulo_funcionesAux)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['DATA'] = DATA
 
 
 # import json
@@ -97,22 +100,23 @@ def show_files():
         filtro = request.form.get('filtro')
 
         if (filtro == 'Más reciente'):
-            excelFiles = [r.filename for r in Classes.query.order_by(Classes.date.desc()).all()]
+            excelFiles = [(r.filename, r.name) for r in Classes.query.order_by(Classes.date.desc()).all()]
         elif (filtro == 'Más antiguo'):
-            excelFiles = [r.filename for r in Classes.query.order_by(Classes.date).all()]
+            excelFiles = [(r.filename, r.name) for r in Classes.query.order_by(Classes.date).all()]
         elif (filtro == 'Orden alfabético'):
-            excelFiles = [r.filename for r in Classes.query.order_by(Classes.filename).all()]
+            excelFiles = [(r.filename, r.name) for r in Classes.query.order_by(Classes.filename).all()]
         else:
-            excelFiles = [r.filename for r in Classes.query.order_by(Classes.filename.desc()).all()]
+            excelFiles = [(r.filename, r.name) for r in Classes.query.order_by(Classes.filename.desc()).all()]
     else:
         filtro = 'Más reciente'
-        excelFiles = [r.filename for r in Classes.query.order_by(Classes.date.desc()).all()]
+        excelFiles = [(r.filename, r.name) for r in Classes.query.order_by(Classes.date.desc()).all()]
 
     print("Estoy mostrando los excels")
     print(type(excelFiles))
     print("Hasta aqui el tipo de excelFiles\nAhora los contenidos de excelFiles")
     print(excelFiles)
-    dataframes = [pd.read_excel(os.path.join(app.config['UPLOAD_FOLDER'],i)).to_html() for i in excelFiles]
+
+    dataframes = [pd.read_excel(os.path.join(app.config['UPLOAD_FOLDER'],i[0])).fillna('').to_html() for i in excelFiles]
 
     lista = list(zip(excelFiles, dataframes))
 

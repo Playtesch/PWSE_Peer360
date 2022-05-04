@@ -8,12 +8,18 @@ Bootstrap(current_app)
 modulo_forms = Blueprint("modulo_forms", __name__,static_folder="static",template_folder="templates")
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, HiddenField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, HiddenField, SelectField, FloatField
 from wtforms.validators import InputRequired, Length, Email,EqualTo
 
 class AssignGroupForm(FlaskForm):
     extension_mail = StringField('Introduzca la extension del email ', validators=[InputRequired(),Email(message="Email no es válido!"),Length(max=50)])
     group = SelectField('Group/Grupo', choices=[('', '--'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')])
+
+class GradingForm(FlaskForm):
+    encuesta = HiddenField("encuesta")
+    evaluado = HiddenField("evaluado")
+
+    grade = FloatField(validators=[InputRequired()])
 
 @modulo_forms.route('/modulo_forms/test')
 def modulo_forms_test():

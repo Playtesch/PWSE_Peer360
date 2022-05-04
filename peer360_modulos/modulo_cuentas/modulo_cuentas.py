@@ -1,4 +1,4 @@
-
+import functools
 from flask_login import LoginManager, login_required, login_user, current_user, logout_user
 from flask import Blueprint, render_template, current_app, flash, request, redirect, url_for, make_response, session
 # import random
@@ -56,13 +56,75 @@ def modulo_cuentas_test():
 @modulo_cuentas.route('/profesor')
 def profesor():
     if current_user.type_user == 0:
-        if request.cookies.get('filename'):
-            return render_template('profesor.html',module="home",cookie=True)
+        if (request.method == 'POST'):
+            filtro = request.form.get('filtro')
+
+            if (filtro == 'Más reciente'):
+                clases = Classes.query.order_by(Classes.date.desc()).all()
+            elif (filtro == 'Más antiguo'):
+                clases = Classes.query.order_by(Classes.date).all()
+            elif (filtro == 'Orden alfabético'):
+                clases = Classes.query.order_by(Classes.filename).all()
+            else:
+                clases = Classes.query.order_by(Classes.filename.desc()).all()
         else:
-            return render_template('profesor.html',module="home")
+            filtro = 'Más reciente'
+            clases = Classes.query.order_by(Classes.date.desc()).all()
+        return render_template('profesor.html',module="home",clases = clases, filtroActivo=filtro)
     else:
         flash("No tienes permisos")
         return(redirect(url_for('modulo_cuentas.student')))
+
+# @modulo_cuentas.route('/detalle_encuesta/<encuesta>')
+# def detalle_encuesta(encuesta):
+#     total = 0
+#     contestado = 0
+#     evaluacion = PeerGrading.query.filter(PeerGrading.encuesta == encuesta)
+#     notas = []
+#     for item in evaluacion:
+#         total +=1
+#         if item.nota:
+#             contestado +=1
+#             notas.append(item.nota)
+#     try:
+#         alumnos_respon = str(contestado/total)+"%"
+#     except:
+#         alumnos_respon = "No hay evaluacion"
+#     try:
+#         media_alumnos = functools.reduce(lambda x, y: x+y, notas)/contestado
+#         normal_alumnos = functools.reduce(lambda x, y: x+y, map(lambda x: x*10/max(notas), notas))/contestado
+#     except:
+#         media_alumnos = "No hay respuestas"
+#         normal_alumnos = "No hay respuestas"
+#     # evaluacion = PeerGrading.query.filter(PeerGrading.encuesta == encuesta, PeerGrading.nota != None)
+#     # evaluacion = evaluacion.map(lambda x: (x.eva
+
+#     total = 0
+#     contestado = 0
+#     evaluacion = GroupGrading.query.filter(GroupGrading.encuesta == encuesta)
+#     notas = []
+#     for item in evaluacion:
+#         total +=1
+#         if item.nota:
+#             contestado +=1
+#             notas.append(item.nota)
+#     try:
+#         grupos_respon = str(contestado/total) + "%"
+#     except:
+#         grupos_respon = "No hay evaluacion"
+#     try:
+#         media_grupos = functools.reduce(lambda x, y: x+y, notas)/contestado
+#         normal_grupos = functools.reduce(lambda x, y: x+y, map(lambda x: x*10/max(notas), notas))/contestado
+#     except:
+#         media_grupos = "No hay respuestas"
+#         normal_grupos = "No hay respuestas"
+#     return render_template('detalle_encuesta.html', encuesta=encuesta,
+#                         alumnos=alumnos_respon,
+#                         grupos=grupos_respon,
+#                         media_alumnos = media_alumnos,
+#                         normal_alumnos = normal_alumnos,
+#                         media_grupos = media_grupos,
+#                         normal_grupos = normal_grupos)
 
 @modulo_cuentas.route('/student', methods=['GET','POST'])
 def student():
@@ -123,7 +185,7 @@ def student():
             # Close the Pandas Excel writer and output the Excel file.
             writer.save()
 
-            save_file_in_db(clase,True)
+            save_file_in_db(clase, None, True)
             setConfirmed(True)
         #Comprobar si todos los grupos ahora sí que están elegidos y hacer lo mismo que: 'modulo_uploadFile.save_file', confirmed='True'
         # Se puede llamar porque al llamar a {{url_for('modulo_uploadFile.save_file', confirmed='True')}} porque no hemos hecho el metodo GET, le podríamos pasar más parametros
@@ -159,10 +221,8 @@ def signup():
 
                 flash('Usuario creado con éxito!')
 
-                if new_user.type_user == 0:
-                    return redirect(url_for('modulo_cuentas.profesor'))
-                else:
-                    return redirect(url_for('index'))
+                return redirect(url_for('modulo_cuentas.login'))
+
 
             except:
                 db.session.rollback()

@@ -1,12 +1,14 @@
 import os
 from flask import Blueprint, current_app
 import pandas as pd
+import xlsxwriter
 from flask_login import current_user
 # from flask_sqlalchemy import SQLAlchemy
 
 modulo_funcionesAux = Blueprint("modulo_funcionesAux", __name__,static_folder="static",template_folder="templates")
 
 UPLOAD_FOLDER = 'uploads'
+DATA = "data"
 ALLOWED_EXTENSIONS = {'xlsx', 'csv'}
 
 configuration = None
@@ -82,6 +84,23 @@ def setConfirmed(value):
 def getConfirmed():
     global confirmed
     return confirmed
+
+def writeExcel(file_name, data, columnas):
+    row = 1
+    column = 0
+    workbook = xlsxwriter.Workbook(os.path.join(current_app.config['DATA'], file_name+".xlsx"))
+
+    worksheet = workbook.add_worksheet()
+    worksheet.write('A1', columnas[0])
+    worksheet.write('B1', columnas[1])
+    worksheet.write('C1', columnas[2])
+    for i in data:
+        for j in i:
+            worksheet.write(row, column, j)
+            column += 1
+        row += 1
+        column = 0
+    workbook.close()
 
 # def getTypeUser():
 #     if current_user.is_authenticated:

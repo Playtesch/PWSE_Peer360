@@ -1,9 +1,33 @@
 {% extends 'base.html' %}
+{% if form %}
+    {% import "bootstrap/wtf.html" as wtf %}
+{% endif %}
 
+{% block title %} Profesor {% endblock %}
 
 {% block content %}
-    <div class="container">
-        HI Profesor {{module}}
-    </div>
 
+    <div class="container">
+        <h1 class="m-0 font-weight-bold text-primary">Bienvenido Profesor</h1>
+        <form action="{{url_for('modulo_cuentas.profesor')}}" method="POST">
+            <select id="filtro" name="filtro" onchange="this.form.submit()">
+                <option label="{{filtroActivo}}" selected disabled hidden>{{filtroActivo}}</option>
+                <option label="Más reciente">Más reciente</option>
+                <option label="Más antiguo">Más antiguo</option>
+                <option label="Orden alfabético">Orden alfabético</option>
+                <option label="Orden alfabético inverso">Orden alfabético inverso</option>
+            </select>
+        </form>
+		<table class="table table-bordered">
+            <th> Encuesta</th>
+            <th> Fecha</th>
+
+        {% for clase in clases %}
+          <tr>
+            <td><button class="btn-primary" onclick="location.href = './detalle_encuesta/{{clase.name}}';" >{{clase.name}}</button></td>
+            <td>{{clase.date}}</td>
+          </tr>
+		{% endfor %}
+		</table>
+    </div>
 {% endblock %}

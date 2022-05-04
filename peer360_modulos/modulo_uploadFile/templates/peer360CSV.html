@@ -13,11 +13,12 @@
                 {{ wtf.form_field(form.extension_mail) }}
             {% endif %}
             <input type="hidden" id="filename" name="filename" value="{{filename}}">
-		    <table class="table table-stripped dataframe" border="1">
+            <input type="hidden" id="name" name="name" value="{{name}}">
+		    <table class="table table-bordered dataframe" border="1">
 		    <thead>
 		    {% for columna in df_nohtml.columns %}
 
-		        <th>{{columna}}</th>
+		        <th><h4 class="m-0 font-weight-bold text-primary">{{columna}}</h4></th>
 
             {% endfor %}
             </thead>
@@ -65,8 +66,8 @@
             {% endfor %}
     	    </table>
     	    <input type="hidden" id="extensionCorreo" name="extensionCorreo">
-    	    <input type="submit" name="action" id="buttonSubmit" value="Confirmar grupos">
-    	    <input type="submit" name="action" id="buttonSubmit_noGroup" value="Enviar sin grupos">
+    	    <input type="submit" name="action" id="buttonSubmit" value="Confirmar grupos" class="btn btn-primary">
+    	    <input type="submit" name="action" id="buttonSubmit_noGroup" value="Enviar sin grupos" class="btn btn-primary">
 		</form>
         {% endif %}
 

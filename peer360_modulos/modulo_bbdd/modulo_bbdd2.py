@@ -47,11 +47,11 @@ class PeerGrading(db.Model):
     __tablename__='peer_grading'
     id = db.Column(db.Integer, primary_key=True)
     #En una actividad...
-    encuesta = db.Column(db.String(50), db.ForeignKey('encuestas.nombre'))
+    encuesta = db.Column(db.String(50), db.ForeignKey('clases.filename'))
     #... un alumno...
-    evaluador = db.Column(db.String(50), db.ForeignKey('estudiantes.email'))
+    evaluador = db.Column(db.String(50), db.ForeignKey('user.email'))
     #... pone nota a otro alumno
-    evaluado = db.Column(db.String(50), db.ForeignKey('estudiantes.email'))
+    evaluado = db.Column(db.String(50), db.ForeignKey('user.email'))
     nota = db.Column(db.Float)
 
     def as_dict(self):
@@ -61,9 +61,9 @@ class GroupGrading(db.Model):
     __tablename__='group_grading'
     id = db.Column(db.Integer, primary_key=True)
     #En una actividad...
-    encuesta = db.Column(db.String(50), db.ForeignKey('encuestas.nombre'))
+    encuesta = db.Column(db.String(50), db.ForeignKey('clases.filename'))
     #... un alumno...
-    evaluador = db.Column(db.String(50), db.ForeignKey('estudiantes.email'))
+    evaluador = db.Column(db.String(50), db.ForeignKey('user.email'))
     #... pone nota a un grupo
     grupo = db.Column(db.String(10))
     nota = db.Column(db.Float)
@@ -121,22 +121,19 @@ def save_encuesta(name, filename):
 
 
 def create_groups(df, encuesta):
-    df_groups = pd.DataFrame({'groups': df["group"].unique()})
-    df_groups = df.merge(df_groups, how='cross')
-    df_groups = df_groups[df_groups.group != df_groups.groups].copy()
-
     for index, row in df_groups.iterrows():
-        groupGrading = GroupGrading(encuesta = encuesta, evaluador = df["email"][index], grupo = df_groups["groups"][index])
-        db.session.add(groupGrading)
-    db.session.commit()
+        try:
+            groupGrading = GroupGrading(encuesta = encuesta, evaluador = df["email"][index], grupo = df_groups["groups"][index])
+            db.session.add(groupGrading)
+            db.session.commit()
+        except:
+            print("El alumno " + df["email"][index]+ " no existe")
 
 def create_peer(df, encuesta):
-    df_360 = df[["email", "group"]].copy()
-    df_360.columns = ["email2", "group2"]
-    df_360 = df.merge(df_360, how='cross')
-    df_360 = df_360[(df_360.group == df_360.group2) & (df_360.email != df_360.email2)].copy()
-
-    for index, row in df_360.iterrows():
-        peerGrading = PeerGrading(encuesta = encuesta, evaluador = df["email"][index], evaluado = df["email2"][index])
-        db.session.add(peerGrading)
-    db.session.commit()
+    for index, row in df.iterrows():
+        try:
+            peerGrading = PeerGrading(encuesta = encuesta, evaluador = df["email"][index], evaluado = df["email2"][index])
+            db.session.add(peerGrading)
+            db.session.commit()
+        except:
+            print("El alumno " + df["email"][index]+ " no existe")
