@@ -1,0 +1,41 @@
+
+
+{% extends 'base.html' %}
+
+{% block title %} Notas {% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <h1 class="m-0 font-weight-bold text-primary">Notas promedio de la encuesta: {{encuesta}}</h1><br>
+        <table class="table table-bordered">
+            <th> {{tipo}}</th>
+            <th> Nota media</th>
+            <th> Nota media normalizada</th>
+            {% for nota in notas %}
+            <tr>
+                <td>{{nota[0]}}</td>
+                <td>{{nota[1]}}</td>
+                <td>{{nota[2]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/download_notas/{{encuesta}}_promedios.xlsx">Descargar Promedios</a><br><br>
+
+        <h1 class="m-0 font-weight-bold text-primary">Detalle de evaluaciones de la encuesta: {{encuesta}}</h1><br>
+        <table class="table table-bordered">
+            <th> Evaluador</th>
+            <th> {{tipo}}</th>
+            <th> Nota</th>
+            {% for ev in evaluacion %}
+            <tr>
+                <td>{{ev[0]}}</td>
+                <td>{{ev[1]}}</td>
+                <td>{{ev[2]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/download_notas/{{encuesta}}_evaluacion.xlsx">Descargar Evaluaciones</a><br><br>
+
+    </div>
+{% endblock %}

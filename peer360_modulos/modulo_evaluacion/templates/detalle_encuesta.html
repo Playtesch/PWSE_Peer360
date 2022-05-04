@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% if form %}
+    {% import "bootstrap/wtf.html" as wtf %}
+{% endif %}
+
+{% block title %} Profesor {% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <h1 class="m-0 font-weight-bold text-primary">Detalle encuesta: {{encuesta}}</h1><br>
+        <p> URL para compartir evaluacion degree360: {{url360}}</p>
+        <p> URL para compartir evaluacion peergrading: {{urlpeer}}</p>
+        <form action="/detalle_encuesta/{{encuesta}}" method="POST">
+            <input class="btn-primary" type="submit" value="Notificar Alumnos" />
+        </form>
+
+        <h3 class="m-0 font-weight-bold"><a href="/notas_encuesta/{{encuesta}}/peergrading">Porcentual de respuestas para grupos</a>: {{grupos}}</h3><br>
+        <h3 class="m-0 font-weight-bold"><a href="/notas_encuesta/{{encuesta}}/degree360">Porcentual de respuestas para estudiantes individuales</a>: {{alumnos}}</h3><br><br>
+        <!--<h2>Notas medias</h2>
+        <p>Nota media de los alumnos: {{media_alumnos}}</p>
+        <p>Nota media normalizada de los alumnos: {{normal_alumnos}}</p>
+        <p>Nota media de los grupos: {{media_grupos}}</p>
+        <p>Nota media normalizada de los grupos: {{normal_grupos}}</p>-->
+        <div class="card shadow mb-4">
+			<!-- Card Header - Accordion -->
+			<a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse"
+				role="button" aria-expanded="true" aria-controls="collapseCardExample">
+				<h2 class="m-0 font-weight-bold text-primary">Notas medias</h2>
+			</a>
+			<!-- Card Content - Collapse -->
+			<div class="collapse show" id="collapseCardExample">
+				<div class="card-body">
+					<p>Nota media de los alumnos: {{media_alumnos}}</p>
+					<p>Nota media normalizada de los alumnos: {{normal_alumnos}}</p>
+					<p>Nota media de los grupos: {{media_grupos}}</p>
+					<p>Nota media normalizada de los grupos: {{normal_grupos}}</p>
+				</div>
+			</div>
+		</div>
+
+    </div>
+{% endblock %}

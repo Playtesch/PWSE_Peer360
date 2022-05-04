@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% if forms %}
+    {% import "bootstrap/wtf.html" as wtf %}
+{% endif %}
+
+{% block title %} Grading {% endblock %}
+
+{% block content %}
+    <div class="container">
+		<h3 class="m-0 font-weight-bold text-primary">Please grade other students:</h3>
+		{% for form in forms %}
+		<form action="{{url_for('modulo_assessment.grade_other_students')}}" method="POST">
+            {{ form.hidden_tag() }}
+            <p class="m-0 font-weight-bold">{{form.encuesta.data}}</p>
+            <p class="m-0 font-weight-bold">{{form.evaluado.data}}</p>
+            {{ wtf.form_field(form.grade) }}
+    	    <input type="submit" class="btn btn-primary">
+		</form>
+		{% endfor %}
+    </div>
+{% endblock %}

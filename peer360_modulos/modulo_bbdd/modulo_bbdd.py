@@ -107,31 +107,35 @@ class User_Group_Class(db.Model):
 
 
 def save_groups(name,df_global):
-    registeredUsers = User.query.filter(User.email).all()
+    try:
+        registeredUsers = User.query.filter(User.email).all()
 
 
-    for index, row in df_global.iterrows():
-        student_group = df_global["group"][index]
-        student_mail = df_global["email"][index]
-        student_name = df_global["name"][index]
-        if (not student_mail in registeredUsers):
+        for index, row in df_global.iterrows():
+            student_group = df_global["group"][index]
+            student_mail = df_global["email"][index]
+            student_name = df_global["name"][index]
+            if (not student_mail in registeredUsers):
+                try:
+                    nuevoUser = User(username=student_name, email=student_mail, password="1234", userhash="")
+                    db.session.add(nuevoUser)
+                    db.session.commit()
+                    send_email(student_mail,
+                                'Your teacher has requested you an evaluation, you have been granted a user. Please change the default password and submit your grade', \
+    		                    'mail/email_requesting_assessment', url="http://davidgarcialleyda.pythonanywhere.com/login")
+                except:
+                    db.session.rollback()
             try:
-                nuevoUser = User(username=student_name, email=student_mail, password="1234", userhash="")
-                db.session.add(nuevoUser)
+                user_group_class = User_Group_Class(encuesta=name, student_group=student_group,
+                                                    email=student_mail)
+                db.session.add(user_group_class)
                 db.session.commit()
-                send_email(student_mail,
-                            'Your teacher has requested you an evaluation, you have been granted a user. Please change the default password and submit your grade', \
-		                    'mail/email_requesting_assessment', url="http://davidgarcialleyda.pythonanywhere.com/login")
             except:
+                flash("Algo no ha ido bien ")
                 db.session.rollback()
-        try:
-            user_group_class = User_Group_Class(encuesta=name, student_group=student_group,
-                                                email=student_mail)
-            db.session.add(user_group_class)
-            db.session.commit()
-        except:
-            flash("Algo no ha ido bien ")
-            db.session.rollback()
+    except:
+        flash("Algo no ha ido bien ")
+        db.session.rollback()
 
 
 def save_file_in_db(filename, name, confirmed_groups="True"):
